@@ -6,6 +6,9 @@ This project is made on purpose to solve BGL Coding Challenge as part of BGL Big
 
 The project allows end-user to customise product & packaging option. As a result, the end-user will be able to do a order testing to see the cost and packaging breakdown for each requested product.
 
+![image](https://user-images.githubusercontent.com/14090075/187371242-f1844c43-d0fb-492c-8dcb-6c1ab1594b45.png)
+
+
 ## Getting Started
 
 To get a local copy up and running follow these steps.
