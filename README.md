@@ -13,7 +13,7 @@ To get a local copy up and running follow these steps.
 ### Prerequisite
 
 * Download XAMPP Version 8.1.6 for <a href="https://www.apachefriends.org/download.html" target="_new">Windows</a> or  <a href="https://www.apachefriends.org/download.html" target="_new">Linux</a>
-* Double click the installer and follow the instruction to finish the installation
+* Double click the installer and follow the instructions to finish the installation
 
 ### Installation
 1. Start the XAMPP program, then start the Apache and Mysql modules

@@ -67,14 +67,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                         <div class="col-sm-8">
                             <h1>Output</h1>
                             <?php
-                            function ordercalculation($remaining_order_qty,$bundle_qty,$bundle_price){
-                                $divison = floor($remaining_order_qty / $bundle_qty);
-                                $remainder = $remaining_order_qty % $bundle_qty;
-                                if($divison > 0 && $remainder >= 0){
-                                    return $divison * $bundle_price;
-                                }
-                            }
-
                             foreach($_POST as $order_product => $order_qty){
                                 if($order_qty > 0){
                                     $total_price = 0;
@@ -86,14 +78,16 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                                             ORDER BY qty DESC";
                                     $result = $conn->query($sql);
                                     while($row = $result->fetch_assoc()){
-                                        $bundle_qty = $row['qty'];
-                                        $bundle_price = $row['price'];
-                                        $divison = floor($remaining_order_qty / $bundle_qty);
-                                        $remainder = $remaining_order_qty % $bundle_qty;
-                                        $total_price += ordercalculation($remaining_order_qty,$bundle_qty,$bundle_price);
+                                        $qty = $row['qty'];
+                                        $price = $row['price'];
+                                        $divison = floor($remaining_order_qty / $qty);
+                                        $remainder = $remaining_order_qty % $qty;
+                                        if($divison > 0 && $remainder >= 0){
+                                            $total_price += $divison * $price;
+                                        }
                                         $remaining_order_qty = $remainder;
                                         if($divison > 0){
-                                            $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $bundle_qty ".($bundle_qty > 1 ? "items" : "item")." ($$bundle_price each)</li>";
+                                            $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $qty ".($qty > 1 ? "items" : "item")." ($$price each)</li>";
                                         }
                                     }
                                     ?>
