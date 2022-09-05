@@ -25,7 +25,7 @@ To get a local copy up and running follow these steps.
 ### Setup The Database
 1. Open your favorite browser, 
 2. Type localhost/bgl-grocery/setup.php on the url bar
-3. If you see no error displayed, it means database is created successfully, you may close the tab
+3. The page will be directed to homepage once database is created successfully
 
 ### Running The Project
 1. Open your favorite browser, 

@@ -7,21 +7,30 @@ if ($action=="add") {
     $code = $_POST['code'];
     $name = $_POST['name'];
     $price = $_POST['price'];
-    $sql = "INSERT INTO product VALUES('$code','$name',$price,1)";
-    $query = $conn->query($sql);
+    $db = new database();
+    $para = array(
+        "code" => "$code",
+        "name" => "$name",
+        "price" => $price
+    );
+    $query = $db->insert("product",$para);
     header("Location: http://localhost/bgl?page=product");
     exit;
 } else if($action=="update") {
     $code = $_POST['code'];
     $name = $_POST['name'];
     $price = $_POST['price'];
-    $sql = "UPDATE product SET name = '$name', price = $price WHERE code = '$code'";
-    $query = $conn->query($sql);
+    $db = new database();
+    $para = array(
+        "name" => "$name",
+        "price" => $price
+    );
+    $query = $db->update("product",$para,"code = '$code'");
     header("Location: http://localhost/bgl?page=product");
     exit;
 } else if($action=="delete") {
-    $sql = "DELETE FROM product WHERE code = '$code'";
-    $query = $conn->query($sql);
+    $db = new database();
+    $db->delete("product","code = '$code'");
     header("Location: http://localhost/bgl?page=product");
     exit;
 }
@@ -48,8 +57,8 @@ if($subpage=="add"){
     </form>
 <?php
 } else if($subpage=="update"){
-    $sql = "SELECT * FROM product WHERE code = '$code'";
-    $result = $conn->query($sql);
+    $db = new database();
+    $result = $db->select("product","*","code = '$code'");
     $row = $result->fetch_assoc();
 ?>
     <h1>Update Product</h1>
@@ -87,8 +96,8 @@ if($subpage=="add"){
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT * FROM product";
-            $result = $conn->query($sql);
+            $db = new database();
+            $result = $db->select("product");
             while($row = $result->fetch_assoc()){
             ?>
                 <tr>

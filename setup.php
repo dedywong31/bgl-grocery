@@ -1,28 +1,11 @@
 <?php
 include "database.php";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
+$db = new database();
+$db->drop_db();
+$db->create_db();
 
-$conn->query("DROP DATABASE IF EXISTS bgl");
-
-// Create database
-$sql = "CREATE DATABASE $dbname";
-
-$conn->query($sql);
-
-$conn->close();
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
+$db = new database();
 
 // sql to create  product
 $sql = "CREATE TABLE product (
@@ -32,7 +15,7 @@ $sql = "CREATE TABLE product (
     qty int(1) unsigned DEFAULT 1
     ); ";
 
-$conn->query($sql);
+$db->create_table($sql);
 
 // sql to create packaging options
 $sql = "CREATE TABLE packaging_option (
@@ -42,16 +25,19 @@ $sql = "CREATE TABLE packaging_option (
     price decimal(13,2)
     );";
 
-$conn->query($sql);
+$db->create_table($sql);
 
 // populating table product with known data
-$sql = "INSERT INTO product VALUES ('CH', 'Cheese',5.95,1),('HM', 'Ham',7.95,1), ('SS', 'Soy Sauce',11.95,1);";
+$db->insert("product",array('code'=>'CH','name'=>'Cheese','price'=>5.95));
+$db->insert("product",array('code'=>'HM','name'=>'Ham','price'=>7.95));
+$db->insert("product",array('code'=>'SS','name'=>'Soy Sauce','price'=>11.95));
 
-$conn->query($sql);
 // populating table packaging_option with known data
-$sql = "INSERT INTO packaging_option VALUES (NULL,'CH', 3,14.95), (NULL,'CH', 5,20.95), (NULL,'HM', 2,13.95), (NULL,'HM', 5,29.95), (NULL,'HM', 9,40.95);";
+$db->insert("packaging_option",array('code'=>'CH','qty'=>3,'price'=>14.95));
+$db->insert("packaging_option",array('code'=>'CH','qty'=>5,'price'=>20.95));
+$db->insert("packaging_option",array('code'=>'HM','qty'=>2,'price'=>13.95));
+$db->insert("packaging_option",array('code'=>'HM','qty'=>5,'price'=>29.95));
+$db->insert("packaging_option",array('code'=>'HM','qty'=>8,'price'=>40.95));
 
-$conn->query($sql);
-
-$conn->close();
+header("Location: http://localhost/bgl");
 ?>

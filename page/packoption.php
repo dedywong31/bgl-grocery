@@ -7,21 +7,30 @@ if ($action=="add") {
     $code = $_POST['code'];
     $qty = $_POST['qty'];
     $price = $_POST['price'];
-    $sql = "INSERT INTO packaging_option VALUES(NULL,'$code',$qty,$price)";
-    $query = $conn->query($sql);
+    $db = new database();
+    $para = array(
+        "code" => "$code",
+        "qty" => "$qty",
+        "price" => $price
+    );
+    $query = $db->insert("packaging_option",$para);
     header("Location: http://localhost/bgl?page=packoption");
     exit;
 } else if($action=="update") {
     $id = $_POST['id'];
     $qty = $_POST['qty'];
     $price = $_POST['price'];
-    $sql = "UPDATE packaging_option SET qty = $qty, price = $price WHERE id = '$id'";
-    $query = $conn->query($sql);
+    $db = new database();
+    $para = array(
+        "qty" => "$qty",
+        "price" => $price
+    );
+    $query = $db->update("packaging_option",$para,"id = $id");
     header("Location: http://localhost/bgl?page=packoption");
     exit;
 } else if($action=="delete") {
-    $sql = "DELETE FROM packaging_option WHERE id = '$id'";
-    $query = $conn->query($sql);
+    $db = new database();
+    $db->delete("packaging_option", "id = $id");
     header("Location: http://localhost/bgl?page=packoption");
     exit;
 }
@@ -34,8 +43,9 @@ if($subpage=="add"){
             <label for="code">Code</label>
             <select class="form-control" id="code" name="code" required="required">
                 <?php
-                $sql_product = "SELECT * FROM product";
-                $result_product = $conn->query($sql_product);
+                
+                $db = new database();
+                $result_product = $db->select("product");
                 while($row_product = $result_product->fetch_assoc()){
                 ?>
                     <option value="<?=$row_product['code']?>"><?=$row_product['code']?> (<?=$row_product['name']?>)</option?>
@@ -58,8 +68,8 @@ if($subpage=="add"){
     </form>
 <?php
 } else if($subpage=="update"){
-    $sql = "SELECT * FROM packaging_option WHERE id = '$id'";
-    $result = $conn->query($sql);
+    $db = new database();
+    $result = $db->select("packaging_option","*","id = '$id'");
     $row = $result->fetch_assoc();
 ?>
     <h1>Update Packaging Option</h1>
@@ -96,8 +106,8 @@ if($subpage=="add"){
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT po.* FROM packaging_option po ORDER BY po.code, po.qty ASC";
-            $result = $conn->query($sql);
+            $db = new database();
+            $result = $db->select("packaging_option","*","","code, qty ASC");
             $codex = "";
             while($row = $result->fetch_assoc()){
             ?>

@@ -1,5 +1,5 @@
 <?php
-include "conn.php";
+include "database.php";
 
 $page = isset($_GET['page']) ? $_GET['page'] : '';
 ?>
@@ -44,13 +44,14 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                             <h1>Order Testing</h1>
                             <form method="post" action="<?=$_SERVER['PHP_SELF']?>">
                                 <?php
-                                $result = $conn->query("SELECT * FROM product");
-                                while($row = $result->fetch_assoc()){
+                                $db = new database();
+                                $result_product = $db->select("product");
+                                while($row_product = $result_product->fetch_assoc()){
                                 ?>
                                     <div class="form-group row">
-                                        <label for="<?=$row['code']?>" class="col-sm-5 col-form-label"><?=$row['code']?> (<?=$row['name']?>)</label>
+                                        <label for="<?=$row['code']?>" class="col-sm-5 col-form-label"><?=$row_product['code']?> (<?=$row_product['name']?>)</label>
                                         <div class="col-sm-7">
-                                            <input type="number" class="form-control" id="<?=$row['code']?>" name="<?=$row['code']?>" value="<?=($_POST) ? $_POST[$row['code']]: '0'?>">
+                                            <input type="number" class="form-control" id="<?=$row_product['code']?>" name="<?=$row_product['code']?>" value="<?=($_POST) ? $_POST[$row_product['code']]: '0'?>">
                                         </div>
                                     </div>
                                 <?php
@@ -67,27 +68,34 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                         <div class="col-sm-8">
                             <h1>Output</h1>
                             <?php
+                            function ordercalculation($remaining_order_qty,$bundle_qty,$bundle_price){
+                                $divison = floor($remaining_order_qty / $bundle_qty);
+                                $remainder = $remaining_order_qty % $bundle_qty;
+                                if($divison > 0 && $remainder >= 0){
+                                    return $divison * $bundle_price;
+                                }
+                            }
+
                             foreach($_POST as $order_product => $order_qty){
                                 if($order_qty > 0){
                                     $total_price = 0;
                                     $breakdown = "";
                                     $remaining_order_qty = $order_qty;
+                                    $db = new database();
                                     $sql = "SELECT po.code, po.qty, po.price FROM packaging_option po WHERE po.code = '$order_product' 
                                             UNION 
                                             SELECT p.code, p.qty, p.price FROM product p WHERE p.code = '$order_product'
                                             ORDER BY qty DESC";
-                                    $result = $conn->query($sql);
+                                    $result = $db->select_custom($sql);
                                     while($row = $result->fetch_assoc()){
-                                        $qty = $row['qty'];
-                                        $price = $row['price'];
-                                        $divison = floor($remaining_order_qty / $qty);
-                                        $remainder = $remaining_order_qty % $qty;
-                                        if($divison > 0 && $remainder >= 0){
-                                            $total_price += $divison * $price;
-                                        }
+                                        $bundle_qty = $row['qty'];
+                                        $bundle_price = $row['price'];
+                                        $divison = floor($remaining_order_qty / $bundle_qty);
+                                        $remainder = $remaining_order_qty % $bundle_qty;
+                                        $total_price += ordercalculation($remaining_order_qty,$bundle_qty,$bundle_price);
                                         $remaining_order_qty = $remainder;
                                         if($divison > 0){
-                                            $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $qty ".($qty > 1 ? "items" : "item")." ($$price each)</li>";
+                                            $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $bundle_qty ".($bundle_qty > 1 ? "items" : "item")." ($$bundle_price each)</li>";
                                         }
                                     }
                                     ?>
@@ -117,7 +125,3 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     </body>
 </html>
-
-<?php
-$conn->close();
-?>
