@@ -68,14 +68,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                         <div class="col-sm-8">
                             <h1>Output</h1>
                             <?php
-                            function ordercalculation($remaining_order_qty,$bundle_qty,$bundle_price){
-                                $divison = floor($remaining_order_qty / $bundle_qty);
-                                $remainder = $remaining_order_qty % $bundle_qty;
-                                if($divison > 0 && $remainder >= 0){
-                                    return $divison * $bundle_price;
-                                }
-                            }
-
                             foreach($_POST as $order_product => $order_qty){
                                 if($order_qty > 0){
                                     $total_price = 0;
@@ -88,11 +80,38 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                                             ORDER BY qty DESC";
                                     $result = $db->select_custom($sql);
                                     while($row = $result->fetch_assoc()){
+                                        /*
+                                        To solve the breakdown, firstly the pack options need to be sorted in descending order.
+                                        
+                                        Order 1: Cheese with 10 qty
+                                        
+                                        Pack Opt|  Divison  | Remainder
+                                        -------------------------------
+                                            5   |     2     |   0
+
+                                        Order 2: Ham with 14 qty
+                                        
+                                        Pack Opt|  Divison  | Remainder
+                                        -------------------------------
+                                            8   |     1     |   6
+                                            5   |     1     |   1
+                                            2   |     0     |   1   ---> doesnt count as it has least than 2
+                                            1   |     1     |   0  
+
+                                        Order 3: Soy Sauce with 3 qty
+                                        
+                                        Pack Opt|  Divison  | Remainder
+                                        -------------------------------
+                                            1   |     3     |   0
+                                        */
+
                                         $bundle_qty = $row['qty'];
                                         $bundle_price = $row['price'];
                                         $divison = floor($remaining_order_qty / $bundle_qty);
                                         $remainder = $remaining_order_qty % $bundle_qty;
-                                        $total_price += ordercalculation($remaining_order_qty,$bundle_qty,$bundle_price);
+                                        if($divison > 0 && $remainder >= 0){
+                                            $total_price = $divison * $bundle_price;
+                                        }
                                         $remaining_order_qty = $remainder;
                                         if($divison > 0){
                                             $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $bundle_qty ".($bundle_qty > 1 ? "items" : "item")." ($$bundle_price each)</li>";
