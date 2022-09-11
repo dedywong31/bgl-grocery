@@ -109,7 +109,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                                         $bundle_price = $row['price'];
                                         $divison = floor($remaining_order_qty / $bundle_qty);
                                         if($divison > 0){
-                                            $total_price = $divison * $bundle_price;
+                                            $total_price += $divison * $bundle_price;
                                             $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $bundle_qty ".($bundle_qty > 1 ? "items" : "item")." ($$bundle_price each)</li>";
                                         }
                                         $remaining_order_qty = $remaining_order_qty % $bundle_qty;
