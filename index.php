@@ -113,6 +113,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
                                             $breakdown .= "<li>$divison ".($divison > 1 ? "packages" : "package")." of $bundle_qty ".($bundle_qty > 1 ? "items" : "item")." ($$bundle_price each)</li>";
                                         }
                                         $remaining_order_qty = $remaining_order_qty % $bundle_qty;
+                                        // end the loop when there is no more qty remaining
+                                        if($remaining_order_qty == 0){
+                                            break;
+                                        }
                                     }
                                     ?>
                                     <ul>
