@@ -31,6 +31,7 @@ $db->create_table($sql);
 $db->insert("product",array('code'=>'CH','name'=>'Cheese','price'=>5.95));
 $db->insert("product",array('code'=>'HM','name'=>'Ham','price'=>7.95));
 $db->insert("product",array('code'=>'SS','name'=>'Soy Sauce','price'=>11.95));
+$db->insert("product",array('code'=>'CC','name'=>'Chocolate','price'=>12.95));
 
 // populating table packaging_option with known data
 $db->insert("packaging_option",array('code'=>'CH','qty'=>3,'price'=>14.95));
@@ -38,6 +39,8 @@ $db->insert("packaging_option",array('code'=>'CH','qty'=>5,'price'=>20.95));
 $db->insert("packaging_option",array('code'=>'HM','qty'=>2,'price'=>13.95));
 $db->insert("packaging_option",array('code'=>'HM','qty'=>5,'price'=>29.95));
 $db->insert("packaging_option",array('code'=>'HM','qty'=>8,'price'=>40.95));
+$db->insert("packaging_option",array('code'=>'CC','qty'=>20,'price'=>50.00));
+$db->insert("packaging_option",array('code'=>'CC','qty'=>70,'price'=>100.00));
 
 header("Location: http://localhost/bgl");
 ?>
